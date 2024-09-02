@@ -1,0 +1,76 @@
+-- Basic:
+
+--   Q1: Retrieve the total number of orders placed.
+-- Answer:    select sum(order_id) from  burger;
+
+--  Q2:  Calculate the total revenue generated from burger "big_meat"  sales.
+   --   Ans:       select sum(price) from  burger  where Burger_type_id = "big_meat";
+   
+-- Q3: Identify the highest-priced burger.
+--   Ans:  select  * from burger order by price  desc limit 1 ;  
+   
+-- Q4: Identify the most common pizza size ordered.
+    --  now we add join in this Q 
+    
+ --  Ans:    select burger.size , count(order_details.order_details_id)as order_count from burger join order_details 
+--       on burger.burger_id = order_details.burger_id group by burger.size order by order_count desc;
+
+-- Q5 : List the top 5 most ordered burger types along with their quantities.
+--    Ans :  we use three table  joins 
+--   select burger.burger_id ,  sum(order_details.quantity) as quantity_count
+--   from  burger join burger_types  on  burger.burger_type_id  = burger_types.burger_type_id
+--   join order_details on  order_details.burger_id =  burger.burger_id
+--   group by burger.burger_id order by quantity_count desc limit 5 ;
+
+-- Intermediate:
+
+-- Q6:Join the necessary tables to find the total quantity of each burger category ordered.
+-- ANS:
+ -- select burger_types.category , sum(order_details.quantity)as quantity_sum 
+--   from burger_types  join burger  on burger_types.Burger_type_id =  burger.burger_type_id
+--   join order_details on  order_details.burger_id=  burger.burger_id 
+--   group by burger_types.category order by  quantity_sum desc;
+  
+  
+-- -- Q7:Determine the distribution of orders by hour of the day.
+-- ANS:  
+     --   select hour(orders.time) ,  count(orders.order_id)
+--        from  orders group by hour(orders.time) ;
+--         
+	
+-- -- Q8:Join relevant tables to find the category-wise distribution of burger.
+-- ANS: 
+    --  select burger_types.category , sum(burger_types.name)  
+--        from burger_types group by burger_types.category;
+--         
+	
+--     Advanced:
+
+-- -- Q9:Group the orders by date and calculate the average 
+--       number of burger ordered per day.
+-- ANS:   sub - query 
+  --   select round(avg(quantity),0)as avg_burger_per_day from
+--     (select  orders.date ,sum(order_details.quantity)as quantity from orders join order_details 
+--     on orders.order_id =  order_details.order_id group  by orders.date)
+--     as order_quantity  ; 
+
+-- Q10:Determine the top 3 most ordered burger types based on revenue.
+-- --  ANS:
+--     select burger_types.name , sum(order_details.quantity * burger.price) as revenue
+--     from  burger_types join burger on burger.burger_type_id =  burger_types.burger_type_id
+--     join order_details on order_details.burger_id = burger.burger_id group by  burger_types.name 
+--     order by revenue desc limit 3 ;
+    
+-- Q11 : Calculate the percentage contribution of each pizza type to total revenue.
+--   ANS:    for the persentage  formula =  (each category revenue / total category revenue )*100
+--   select burger_types.category , round(sum(order_details.quantity * burger.price)/( 
+--   select  round(sum(order_details.quantity),2) as total_price from burger join order_details 
+--   on burger.burger_id =  order_details.burger_id)*100,2) as revenue
+--   from  burger_types join burger on burger.burger_type_id =  burger_types.burger_type_id
+--   join order_details on order_details.burger_id = burger.burger_id group by  burger_types.category
+--   order by revenue ;
+       
+
+
+
+   
